@@ -54,6 +54,7 @@ class TeamsController < ApplicationController
     @team.owner_id = params[:owner_id]
     if @team.save
       redirect_to team_url(params[:id]), notice: '新リーダーの任命を行いました！'
+      ChangeLeaderMailer.appointment_mail(@team.owner.email, @team.name).deliver
     else
       redirect_to team_url(params[:id]), notice: '新リーダーの任命に失敗しました・・・'
     end
