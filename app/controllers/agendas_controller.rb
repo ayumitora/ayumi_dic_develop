@@ -26,6 +26,11 @@ class AgendasController < ApplicationController
     if @agenda.team.isOwned?(current_user) || @agenda.user == current_user
       @agenda.destroy
       redirect_to dashboard_url, notice: 'アジェンダを削除しました'
+      agenda_team_id = @agenda.team_id
+      @users = Assign.where(team_id: agenda_team_id).all
+      @users.each do |member|
+        DestroyMailer.destroy_agenda_mail(member).deliver
+      end
     else
       redirect_to dashboard_url, notice: 'アジェンダを削除する権限がありません'
     end
